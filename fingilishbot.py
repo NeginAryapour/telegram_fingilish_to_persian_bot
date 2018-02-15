@@ -6,6 +6,10 @@ you shoud put your token in token.txt
 '''
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from finglish import f2p
+from telegram.ext import InlineQueryHandler
+from telegram import InlineQueryResultArticle, InputTextMessageContent
+from my_random import id_generator
+
 
 def start(bot, update):
     """Send a message when the command /start is issued."""
@@ -23,6 +27,21 @@ def fin2per(bot, update):
     update.message.reply_text(f2p(recived))
 
 
+def inlinef2p(bot, update):
+    query = update.inline_query.query
+    if not query:
+        return
+    results = []
+    results.append(
+        InlineQueryResultArticle(
+            id = id_generator(),
+            title = "finglish to persian : "+ f2p(query),
+            input_message_content = InputTextMessageContent(f2p(query))
+        )
+    )
+    bot.answer_inline_query(update.inline_query.id, results)
+
+
 def read_token():
     with open('token.txt', 'r') as file:
         return file.readline().strip()
@@ -35,6 +54,7 @@ def main():
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("help", help))
     dp.add_handler(MessageHandler(Filters.text, fin2per))
+    dp.add_handler(InlineQueryHandler(inlinef2p))
 
     updater.start_polling()
     updater.idle()
