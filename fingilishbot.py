@@ -5,7 +5,7 @@ negin awesome bot
 you shoud put your token in token.txt
 '''
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
-from finglish import f2p
+from finglish import f2p, f2p_list
 from telegram.ext import InlineQueryHandler
 from telegram import InlineQueryResultArticle, InputTextMessageContent
 from my_random import id_generator
@@ -32,13 +32,14 @@ def inlinef2p(bot, update):
     if not query:
         return
     results = []
-    results.append(
-        InlineQueryResultArticle(
-            id = id_generator(),
-            title = "finglish to persian : "+ f2p(query),
-            input_message_content = InputTextMessageContent(f2p(query))
+    for first, second in f2p_list(query)[0]:
+        results.append(
+            InlineQueryResultArticle(
+                id = id_generator(),
+                title =  first,
+                input_message_content = InputTextMessageContent(first)
+            )
         )
-    )
     bot.answer_inline_query(update.inline_query.id, results)
 
 
